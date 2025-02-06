@@ -17,11 +17,16 @@ class Settings:
         self.bullets_allowed = 10
 
         # Alien settings
-        
         self.fleet_drop_speed = 10
+
+        # Score Settings
+        self.alien_points = 50
 
         # Increasing speed in game scale
         self.speedup_scale = 1.1
+
+        # Increase number of points as game progresses
+        self.score_scale = 1.5
 
         self.initialize_dynamic_settings()
     
@@ -37,3 +42,4 @@ class Settings:
         self.ship_speed *= self.speedup_scale
         self.alien_speed *= self.speedup_scale
         self.bullet_speed *= self.speedup_scale
+        self.alien_points = int(self.alien_points * self.score_scale) 
