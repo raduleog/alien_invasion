@@ -31,7 +31,10 @@ class Ship:
         
         # Update the rect object from self.x which is a float
         self.rect.x = self.x
-        
+    def center_ship(self):
+        # Center the ship after death
+        self.rect.midbottom = self.screen_rect.midbottom
+        self.x = float(self.rect.x)    
 
     def blitme(self):
         # Draw the ship at its current location
