@@ -66,6 +66,8 @@ class AlienInvasion:
         if self.play_button.rect.collidepoint(mouse_pos) and not self.game_active:
             self.stats.reset_stats()
             self.sb.prep_score()
+            self.sb.prep_level()
+            self.sb.prep_ships()
             self.game_active = True
             self.settings.initialize_dynamic_settings()
             # Remove remaining ships and bullets.
@@ -149,6 +151,11 @@ class AlienInvasion:
             self.bullets.empty()
             self._create_fleet()
             self.settings.increase_speed()
+
+            # Increase level
+            self.stats.level += 1
+            self.sb.prep_level()
+            
         if collisions:
             for aliens in collisions.values():
                 self.stats.score += self.settings.alien_points*len(aliens)
@@ -170,7 +177,7 @@ class AlienInvasion:
         # Respond to the ship being hit
         if self.stats.ships_left > 0:
             self.stats.ships_left -= 1
-
+            self.sb.prep_ships()
             # Get rid of any remaining bullets and aliens
             self.bullets.empty()
             self.aliens.empty()

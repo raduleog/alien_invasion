@@ -6,9 +6,11 @@ class GameStats:
         self.reset_stats()
 
         # High score deosnt reset
-        self.high_score = 0
+        f = open("highscore.txt", "r")
+        self.high_score = int(f.read())
     
     def reset_stats(self):
         self.ships_left = self.settings.ship_limit
         self.score = 0
+        self.level = 1
         
