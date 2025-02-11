@@ -8,6 +8,8 @@ from alien import Alien
 from game_stats import GameStats
 from button import Button
 from scoreboard import Scoreboard
+from projectile import Projectile
+import random
 
 class AlienInvasion:
     # Overall class to manage game assets and behavior.
@@ -28,7 +30,10 @@ class AlienInvasion:
 
         self.ship = Ship(self)
         self.bullets = pygame.sprite.Group()
+        self.projectiles = pygame.sprite.Group()
         self.aliens = pygame.sprite.Group()
+
+        pygame.time.set_timer(pygame.USEREVENT, 1000)
 
         self._create_fleet()
 
@@ -45,6 +50,7 @@ class AlienInvasion:
                 self.ship.update()
                 self._update_bullets()
                 self._update_aliens()
+                self._update_projectiles()
             self._check_events()
             self._update_screen()
             self.clock.tick(60)
@@ -61,6 +67,16 @@ class AlienInvasion:
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = pygame.mouse.get_pos()
                 self._check_play_button(mouse_pos)
+            elif event.type == pygame.USEREVENT:
+                self._alien_fire()
+    
+    def _alien_fire(self):
+        # Fire bullet for each alien
+        for alien in self.aliens:
+            chance = random.randint(0, 100)
+            if chance < self.settings.projectile_chance:
+                new_projectile = Projectile(self, alien)
+                self.projectiles.add(new_projectile)
     
     def _check_play_button(self, mouse_pos):
         if self.play_button.rect.collidepoint(mouse_pos) and not self.game_active:
@@ -120,6 +136,10 @@ class AlienInvasion:
         for bullet in self.bullets.sprites():
             bullet.draw_bullet()
         
+        for projectile in self.projectiles.sprites():
+            projectile.draw_projectile()
+
+
         self.ship.blitme()
         self.aliens.draw(self.screen)
         self.sb.show_score()
@@ -143,6 +163,16 @@ class AlienInvasion:
         # Check if the bullets hit aliens
         self._check_bullet_alien_collision()
          
+    # Function that updates the projectiles locations on screen
+    def _update_projectiles(self):
+        self.projectiles.update()
+
+        if pygame.sprite.spritecollideany(self.ship, self.projectiles):
+            self._ship_hit()
+            
+        for projectile in self.projectiles.copy():
+            if projectile.rect.top >= self.screen.get_height():
+                self.projectiles.remove(projectile)
 
     def _check_bullet_alien_collision(self):
         collisions = pygame.sprite.groupcollide(self.bullets, self.aliens, True, True)
@@ -172,6 +202,8 @@ class AlienInvasion:
         
         # Check if aliens reached the bottom
         self._check_aliens_bottom()
+
+        
     
     def _ship_hit(self):
         # Respond to the ship being hit
@@ -181,7 +213,7 @@ class AlienInvasion:
             # Get rid of any remaining bullets and aliens
             self.bullets.empty()
             self.aliens.empty()
-
+            self.projectiles.empty()
             # Create a new fleet and center the ship
             self._create_fleet()
             self.ship.center_ship()

@@ -18,6 +18,7 @@ class Settings:
 
         # Alien settings
         self.fleet_drop_speed = 10
+        self.projectile_chance = 1
 
         # Score Settings
         self.alien_points = 50
@@ -34,6 +35,8 @@ class Settings:
         self.alien_speed = 1.0
         self.ship_speed = 3
         self.bullet_speed = 5.0
+
+        self.projectile_speed = 2.0
 
         self.fleet_direction = 1
     
