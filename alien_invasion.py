@@ -207,14 +207,18 @@ class AlienInvasion:
         alien = Alien(self)
         self.aliens.add(alien)
         alien_width, alien_height = alien.rect.size
-
+        starting_x = 0
+        ending_x = self.settings.screen_width - 2 * alien_width
         current_x, current_y = alien_width, alien_height
+
+        # Building a fleet in the shape of a pyramid
         while current_y < (self.settings.screen_height - 3 * alien_height):
-            while current_x < (self.settings.screen_width - 2 * alien_width):
+            while current_x < ending_x:
                 self._create_alien(current_x, current_y)
                 current_x += 2*alien_width
-            
-            current_x = alien_width
+            starting_x += 5
+            current_x = alien_width * starting_x
+            ending_x = self.settings.screen_width - current_x
             current_y += 2 * alien_height
 
     def _create_alien(self, x_position, y_position):
